@@ -2,16 +2,17 @@
 import pygame
 import time
 import random
+import config  # import config file
 
 pygame.init()
 
 # colors definition
-white = (255, 255, 255) # TODO (add to config file) define colors in config file
-yellow = (255, 255, 102)
-black = (0, 0, 0)
-red = (213, 50, 80)
-green = (0, 255, 0)
-blue = (50, 153, 213)
+#white = (255, 255, 255) # TODO (add to config file) define colors in config file
+#yellow = (255, 255, 102)
+#black = (0, 0, 0)
+#red = (213, 50, 80)
+#green = (0, 255, 0)
+#blue = (50, 153, 213)
 
 dis_width = 600 # TODO (add to config file)width of display window
 dis_height  = 400 # height of display window
@@ -31,9 +32,14 @@ font_style = pygame.font.SysFont("bahnschrift", 25) # another font style and siz
 score_font = pygame.font.SysFont("comicsansms", 35)
  
 
+def Your_score(score): # function to display score
+    value = score_font.render("Your Score: " + str(score), True, config.SCORECOLORE)  # render the score
+    dis.blit(value, [0, 0]) # display the score on screen
+ 
+
 def our_snake(snake_block, snake_list): # function to display snake
     for x in snake_list:
-        pygame.draw.rect(dis, black, [x[0], x[1], snake_block, snake_block]) # draw rectangle for snake
+        pygame.draw.rect(dis, config.SNAKECOLOR, [x[0], x[1], snake_block, snake_block]) # draw rectangle for snake
 
 
 def message(msg,color): # function to display message on screen
@@ -63,8 +69,9 @@ def gameLoop(): # main function of game
     while not game_over: # main loop of game
 
         while game_close == True: # if game is over
-            dis.fill(blue) # fill the display with white color
-            message("You Lost! Press Q-Quit or C-Play Again", red)  # display message
+            dis.fill(config.DISPLAYCOLOR) # fill the display with DISPLAYCOLOR color
+            message("You Lost! Press Q-Quit or C-Play Again", config.MESSAGECOLOR)  # display message
+            Your_score(Length_of_snake - 1) # display score
             pygame.display.update()
 
             for event in pygame.event.get():    # event handling
@@ -97,9 +104,9 @@ def gameLoop(): # main function of game
             
         x1 += x1_change             # update position of snake
         y1 += y1_change
-        dis.fill(blue) # fill display with white color
+        dis.fill(config.DISPLAYCOLOR) # fill display with DISPLAYCOLOR color
 
-        pygame.draw.rect(dis, green, [foodx, foody, snake_block, snake_block]) # draw food on screen
+        pygame.draw.rect(dis, config.FOODCOLOR, [foodx, foody, snake_block, snake_block]) # draw food on screen
         snake_Head = [] # list to store position of snake head
         snake_Head.append(x1) # append x and y position of snake head
         snake_Head.append(y1)  
@@ -112,6 +119,7 @@ def gameLoop(): # main function of game
                 game_close = True
 
         our_snake(snake_block, snake_List)        # call function to display snake 
+        Your_score(Length_of_snake - 1)           # call function to display score
 
         pygame.display.update()
 
