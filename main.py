@@ -1,9 +1,10 @@
 # Simple Snake Game in Python 3 for Beginners
 import pygame
+from pygame import mixer
 import time
 import random
 import json
-import os
+import os, sys
 import config  # import config file
 
 def load_highscores(): 
@@ -177,6 +178,18 @@ def message(msg,color): # function to display message on screen
 def gameLoop(): # main function of game
     list_of_moving_rods = []
 
+    # Starting the mixer
+    mixer.init()
+
+    # Loading the game song
+    mixer.music.load(APP_FOLDER + "\music\game.wav")
+
+    # Setting the volume
+    mixer.music.set_volume(0.7)
+
+    # Start playing the song
+    mixer.music.play(-1)
+
     # for input box
     waiting_for_name = True
     wating_for_highscore = True
@@ -198,6 +211,7 @@ def gameLoop(): # main function of game
     while not game_over: # main loop of game
 
         while game_close == True: # if game is over
+
             if check_highscore(Length_of_snake - 1):
                 # Normally you'd build an input box here
 #                name = input("New Highscore! Enter your name: ")
@@ -234,10 +248,12 @@ def gameLoop(): # main function of game
                                 wating_for_highscore = False
                                 waiting_for_name = False
             
-            dis.fill(config.DISPLAYCOLOR) # fill the display with DISPLAYCOLOR color
+            dis.fill((30, 30, 30)) # fill the display with DISPLAYCOLOR color
             message("You Lost! Press Q-Quit or C-Play Again", config.MESSAGECOLOR)  # display message
             Your_score(Length_of_snake - 1) # display score
             pygame.display.update()
+            # Starting the mixer
+            
 
             for event in pygame.event.get():    # event handling
                 if event.type == pygame.KEYDOWN:
@@ -266,6 +282,9 @@ def gameLoop(): # main function of game
                     x1_change = 0
 
         if x1 >= config.DIS_WIDTH or x1 < 0 or y1 >= config.DIS_HEIGHT or y1 < 0: # if snake hits the wall
+            mixer.music.stop()
+            mixer.music.load(APP_FOLDER + "\music\game-over.mp3")
+            mixer.music.play(-1)
             game_close = True
             
         x1 += x1_change             # update position of snake
@@ -282,6 +301,9 @@ def gameLoop(): # main function of game
 
         for x in snake_List[:-1]: # if snake hits itself
             if x == snake_Head:
+                mixer.music.stop()
+                mixer.music.load(APP_FOLDER + "\music\game-over.mp3")
+                mixer.music.play(-1)
                 game_close = True
 
 
@@ -295,6 +317,10 @@ def gameLoop(): # main function of game
 
         # if hit moving rod game will close
         if hit_moving_rod(list_of_moving_rods, snake_List, snake_Head):
+            # Loading the game song
+            mixer.music.stop()
+            mixer.music.load(APP_FOLDER + "\music\game-over.mp3")
+            mixer.music.play(-1)
             game_close = True
 
 
@@ -325,9 +351,12 @@ font_style = pygame.font.SysFont("bahnschrift", 25) # another font style and siz
 score_font = pygame.font.SysFont("comicsansms", 35)
 font = pygame.font.SysFont(None, 40) # highscore font
 
+# get path of current directory
+APP_FOLDER = os.path.dirname(os.path.realpath(sys.argv[0]))
+
 # create text input box
 input_box = TextInputBox(200, 200, 200, 50, font)
-#player_score = 123  # Example score
+
 
  
 gameLoop() # call the main function to start the game
